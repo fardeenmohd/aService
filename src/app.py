@@ -14,7 +14,7 @@ def index():
     return get_users()
 
 
-@route('/user/add/<user_name:string>')
+@route('/user/add/<user_name>')
 def add_user_from_route():
     name = request.query.get('user_name') or None
     if name is None:
