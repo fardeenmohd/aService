@@ -16,7 +16,7 @@ def index():
 
 @route('/user/add/<user_name>')
 def add_user_from_route(user_name):
-    name = request.query.get('user_name') or None
+    name = user_name
     if name is None:
         return "Cannot make user with no name"
     else:
