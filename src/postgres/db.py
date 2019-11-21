@@ -5,7 +5,7 @@ import sys
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from .models import Base
+from .models import Base, User
 
 
 def _create_session():
@@ -25,5 +25,13 @@ def _create_session():
 
 session = _create_session()
 
+
 # sql functions
 
+def add_user(name):
+    session.add(User(name=name))
+    session.commit()
+
+
+def get_users():
+    return session.query(User).order_by(User.name.asc()).all()

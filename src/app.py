@@ -1,6 +1,7 @@
 import os
 
-from bottle import route, run, request, static_file, view
+from bottle import route, run, static_file, request
+from src.postgres.db import get_users, add_user
 
 
 @route('/static/<filename:path>')
@@ -10,7 +11,17 @@ def send_static(filename):
 
 @route('/')
 def index():
-    return "Hello World"
+    return get_users()
+
+
+@route('/user/add/<user_name:string>')
+def add_user_from_route():
+    name = request.query.get('user_name') or None
+    if name is None:
+        return "Cannot make user with no name"
+    else:
+        add_user(name)
+        return "User " + name + " added"
 
 
 if os.environ.get('APP_LOCATION') == 'heroku':
