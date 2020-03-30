@@ -9,13 +9,13 @@ from .models import Base, User
 
 
 def _create_session():
-    db_url = environ.get('DATABASE_URL')
+    db_url = environ.get('DATABASE_URL') or 'postgresql://postgres:3122@localhost:5432/postgres'
 
     if 'pytest' in sys.argv[0]:
         db_url += '_test'
 
     if not db_url:
-        raise EnvironmentError('Need to set (TEST_)DATABASE_URL')
+        raise EnvironmentError('Need to set (TEST_DATABASE_URL')
 
     engine = create_engine(db_url, echo=True)
     Base.metadata.create_all(engine)
