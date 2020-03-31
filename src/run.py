@@ -3,8 +3,8 @@ import json
 import time
 import math
 import matplotlib.pyplot as plt
-from core.data_processor import DataLoader
-from core.model import Model
+from data_processor import DataLoader
+from model import Model
 
 
 def plot_results(predicted_data, true_data):
@@ -29,11 +29,10 @@ def plot_results_multiple(predicted_data, true_data, prediction_len):
 
 
 def main():
-    configs = json.load(open('config.json', 'r'))
+    configs = json.load(open('../config.json', 'r'))
     if not os.path.exists(configs['model']['save_dir']): os.makedirs(configs['model']['save_dir'])
-
     data = DataLoader(
-        os.path.join('data', configs['data']['filename']),
+        os.path.join('..\\data', configs['data']['filename']),
         configs['data']['train_test_split'],
         configs['data']['columns']
     )
