@@ -1,7 +1,7 @@
 import os
-
-from bottle import route, run, static_file, request, get, post
-# from postgres.db import get_users, add_user
+import simplejson as json
+from bottle import route, run, static_file, request, response, get, post
+# from run import main
 
 
 @route('/static/<filename:path>')
@@ -9,19 +9,25 @@ def send_static(filename):
     return static_file(filename, root='../static')
 
 
-# @route('/')
-# def index():
-#     return get_users()
-#
-#
-# @route('/user/add/<user_name>')
-# def add_user_from_route(user_name):
-#     name = user_name
-#     if name is None:
-#         return "Cannot make user with no name"
-#     else:
-#         add_user(name)
-#         return "User " + name + " added"
+@route('/')
+def index():
+    return "Wait for it Boy"
+
+
+@post('/predictStockMarket')
+def make_a_prediction():
+    try:
+        data = request.json
+        # main() #to test if my request can trigger the function called main in run.py
+
+    except ValueError:
+        # if bad request data, return 400 Bad Request
+        response.status = 400
+        return
+
+    response.headers['Content-Type'] = 'application/json'
+
+    return json.dumps({'message': "You triggered me " + data["name"]})
 
 
 if os.environ.get('APP_LOCATION') == 'heroku':

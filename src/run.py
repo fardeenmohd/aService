@@ -30,11 +30,13 @@ def plot_results_multiple(predicted_data, true_data, prediction_len):
 
 def main():
     configs = json.load(open('../config.json', 'r'))
+
     if not os.path.exists(configs['model']['save_dir']): os.makedirs(configs['model']['save_dir'])
+
     data = DataLoader(
-        os.path.join('..\\data', configs['data']['filename']),
-        configs['data']['train_test_split'],
-        configs['data']['columns']
+        stock_code='MSFT',
+        split=configs['data']['train_test_split'],
+        cols=configs['data']['columns']
     )
 
     model = Model()
@@ -74,8 +76,8 @@ def main():
         normalise=configs['data']['normalise']
     )
 
-    predictions = model.predict_sequences_multiple(x_test, configs['data']['sequence_length'],
-                                                   configs['data']['sequence_length'])
+    predictions = model.predict_sequences_multiple(data=x_test, prediction_len=configs['data']['sequence_length'],
+                                                   window_size=configs['data']['sequence_length'])
     # predictions = model.predict_sequence_full(x_test, configs['data']['sequence_length'])
     # predictions = model.predict_point_by_point(x_test)
 

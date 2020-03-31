@@ -7,11 +7,11 @@ from alpha_vantage.timeseries import TimeSeries
 class DataLoader:
     """A class for loading and transforming data for the lstm model"""
 
-    def __init__(self, filename, split, cols):
-        ts = TimeSeries(key='T6P5PZDEXZTMHC5V', output_format='pandas')
-        dataframe, meta_data = ts.get_intraday(symbol='MSFT', interval='1min', outputsize='full')
+    def __init__(self, split=0.85, cols=("1. open", "2. high", "3. low", "4. close", "5. volume"), stock_code="MSFT"):
 
-        # dataframe = pd.read_csv(filename)
+        ts = TimeSeries(key='T6P5PZDEXZTMHC5V', output_format='pandas')
+
+        dataframe, meta_data = ts.get_daily(symbol=stock_code, outputsize='full')  # full 20 years of daily data
         i_split = int(len(dataframe) * split)
         self.data_train = dataframe.get(cols).values[:i_split]
         self.data_test = dataframe.get(cols).values[i_split:]
@@ -19,7 +19,7 @@ class DataLoader:
         self.len_test = len(self.data_test)
         self.len_train_windows = None
 
-    def get_test_data(self, seq_len, normalise):
+    def get_test_data(self, seq_len=50, normalise=True):
         '''
         Create x, y test data windows
         Warning: batch method, not generative, make sure you have enough memory to
@@ -36,7 +36,7 @@ class DataLoader:
         y = data_windows[:, -1, [0]]
         return x, y
 
-    def get_train_data(self, seq_len, normalise):
+    def get_train_data(self, seq_len=50, normalise=True):
         '''
         Create x, y train data windows
         Warning: batch method, not generative, make sure you have enough memory to
@@ -50,7 +50,7 @@ class DataLoader:
             data_y.append(y)
         return np.array(data_x), np.array(data_y)
 
-    def generate_train_batch(self, seq_len, batch_size, normalise):
+    def generate_train_batch(self, seq_len=50, batch_size=32, normalise=True):
         '''Yield a generator of training data from filename on given list of cols split for train/test'''
         i = 0
         while i < (self.len_train - seq_len):

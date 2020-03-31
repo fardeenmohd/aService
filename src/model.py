@@ -66,7 +66,7 @@ class Model():
         print('[Model] Training Completed. Model saved as %s' % save_fname)
         timer.stop()
 
-    def train_generator(self, data_gen, epochs, batch_size, steps_per_epoch, save_dir):
+    def train_generator(self, data_gen,  steps_per_epoch, save_dir, epochs=2, batch_size=32):
         timer = Timer()
         timer.start()
         print('[Model] Training Started')
@@ -94,7 +94,7 @@ class Model():
         predicted = np.reshape(predicted, (predicted.size,))
         return predicted
 
-    def predict_sequences_multiple(self, data, window_size, prediction_len):
+    def predict_sequences_multiple(self, data, window_size=50, prediction_len=50):
         # Predict sequence of 50 steps before shifting prediction run forward by 50 steps
         print('[Model] Predicting Sequences Multiple...')
         prediction_seqs = []
@@ -108,7 +108,7 @@ class Model():
             prediction_seqs.append(predicted)
         return prediction_seqs
 
-    def predict_sequence_full(self, data, window_size):
+    def predict_sequence_full(self, data, window_size=50):
         # Shift the window by 1 new prediction each time, re-run predictions on new window
         print('[Model] Predicting Sequences Full...')
         curr_frame = data[0]
