@@ -1,17 +1,4 @@
 {
-	"data": {
-		"filename": "sp500.csv",
-		"columns": [
-			"1. open",
-			"2. high",
-			"3. low",
-			"4. close",
-			"5. volume"
-		],
-		"sequence_length": 50,
-		"train_test_split": 0.85,
-		"normalise": true
-	},
 	"training": {
 		"epochs": 2,
 		"batch_size": 32

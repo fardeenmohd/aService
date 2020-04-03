@@ -1,7 +1,7 @@
 import os
-import simplejson as json
-from bottle import route, run, static_file, request, response, get, post
-# from run import main
+
+from bottle import route, run, static_file, request, response, post
+from model import Model
 
 
 @route('/static/<filename:path>')
@@ -18,7 +18,8 @@ def index():
 def make_a_prediction():
     try:
         data = request.json
-        # main() #to test if my request can trigger the function called main in run.py
+        model = Model(configs=data["configs"] if "config" in data.keys() else None,
+                      data_configs=data["data_configs"] if "data_configs" in data.keys() else None)
 
     except ValueError:
         # if bad request data, return 400 Bad Request
@@ -27,7 +28,8 @@ def make_a_prediction():
 
     response.headers['Content-Type'] = 'application/json'
 
-    return json.dumps({'message': "You triggered me " + data["name"]})
+    response_data = str(model.predict())
+    return response_data
 
 
 if os.environ.get('APP_LOCATION') == 'heroku':

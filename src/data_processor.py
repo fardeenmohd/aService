@@ -1,20 +1,45 @@
-import math
+import enum
+
 import numpy as np
-import pandas as pd
 from alpha_vantage.timeseries import TimeSeries
+
+
+class PredictionType(enum.Enum):
+    multiSequence = "Multi-Sequence"
+    fullSequence = "Full-Sequence"
+    pointByPoint = "Point-By-Point"
+
+
+class DataLoaderType(enum.Enum):
+    stocks = "Stocks"
+
+    def __str__(self):
+        return self.value
 
 
 class DataLoader:
     """A class for loading and transforming data for the lstm model"""
 
-    def __init__(self, split=0.85, cols=("1. open", "2. high", "3. low", "4. close", "5. volume"), stock_code="MSFT"):
+    def __init__(self, data_configs=None):
 
-        ts = TimeSeries(key='T6P5PZDEXZTMHC5V', output_format='pandas')
+        self.data_configs = {
+            "prediction_type": PredictionType.multiSequence,
+            "sequence_length": 50, "normalise": True,
+            "split": 0.85, "cols": ["1. open", "2. high", "3. low", "4. close", "5. volume"],
+            "type": DataLoaderType.stocks,
+            "identifier": {"name": "MSFT"}} if data_configs is None else data_configs
 
-        dataframe, meta_data = ts.get_daily(symbol=stock_code, outputsize='full')  # full 20 years of daily data
-        i_split = int(len(dataframe) * split)
-        self.data_train = dataframe.get(cols).values[:i_split]
-        self.data_test = dataframe.get(cols).values[i_split:]
+        if self.data_configs["type"] == DataLoaderType.stocks:
+            ts = TimeSeries(key='T6P5PZDEXZTMHC5V', output_format='pandas')
+
+            dataframe, meta_data = ts.get_daily(symbol=self.data_configs["identifier"]["name"],
+                                                outputsize='full')  # full 20 years of daily data
+
+            i_split = int(len(dataframe) * self.data_configs["split"])
+
+            self.data_train = dataframe.get(self.data_configs["cols"]).values[:i_split]
+            self.data_test = dataframe.get(self.data_configs["cols"]).values[i_split:]
+
         self.len_train = len(self.data_train)
         self.len_test = len(self.data_test)
         self.len_train_windows = None
